@@ -1,4 +1,4 @@
-package nl.han.se.bewd.mockworkshop.toets;
+package nl.han.se.bewd.mockworkshop.student;
 
 public class FoutiefStudentException extends IllegalArgumentException{
 }
