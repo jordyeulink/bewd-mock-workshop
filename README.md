@@ -31,9 +31,9 @@ Unit tests zijn het meest nuttig als één wijziging in de code ook maar één o
 ## Isolatie van je SUT
 In de applicatie zit één enkele bug in één enkele class. Het doel van deze workshop is niet om de bug te fixen, maar om er voor te zorgen dat de unittests die de buggy class niet horen te testen ook niet meer falen. In de volgende stappen ga je verschillende manieren proberen om de testen te verbeteren door het SUT te verkleinen naar alleen de class die je wilt testen. Je gaat het SUT beter _isoleren_. Je doet dit door enkel de testcode aan te passen (de code in de test/java directory). In geen enkel geval is het nodig of toegestaan om de applicatiecode zelf (alle code onder /main/java) te wijzigen tenzij dit specifiek staat beschreven.
 
-### 4. Gebruik Polymorfisme om de SUT te isoleren part1: Interfaces
+### 4. Gebruik Polymorfie om de SUT te isoleren part1: Interfaces
 
-Bekijk de testen in de class 'VakTest'. De eerste test 'getCijferMetEnkeleToetsGeeftCijferTerug' faalt. De SUT van deze test is de klasse 'Vak', maar hier zit niet de bug. Als je wilt dat alleen je 'System Under Test' (Vak in dit geval) getest wordt, en bugs in andere classes (Bijvoorbeeld de *IndividueleToets* class) er niet voor zorgen dat deze test faalt. Wat kan je dan aanpassen in je unit test? Hoe verbreken we de afhankelijkheid van *IndividueleToets*
+Bekijk de testen in de class 'VakTest'. De eerste test 'opdracht4getCijferMetEnkeleToetsGeeftCijferTerug' faalt. De SUT van deze test is de klasse 'Vak', maar hier zit niet de bug. Als je wilt dat alleen je 'System Under Test' (Vak in dit geval) getest wordt, en bugs in andere classes (Bijvoorbeeld de *IndividueleToets* class) er niet voor zorgen dat deze test faalt. Wat kan je dan aanpassen in je unit test? Hoe verbreken we de afhankelijkheid van *IndividueleToets*
 
 1. Vervang de implementatie van de andere classes door gebruik te maken van Polymorfisme. Als de class waar je afhankelijk van bent een interface is dan kan je een eigen 'fake implementatie'' schrijven die vaste waardes teruggeeft. Maak de fake class in de test/java directory in het package 'nl.han.se.bewd.mockworkshop.toets'.
 1. Creeer in je test package een nieuwe class welke de interface 'Summatief' implementeert.
@@ -48,7 +48,7 @@ Bekijk de testen in de class 'VakTest'. De eerste test 'getCijferMetEnkeleToetsG
     ```
 1. Run de unittest (of run alle testen). Als het goed is slaagt de *getCijferMetEnkeleToetsGeeftCijferTerug* test nu. Hoera! Er falen nu minder testen van de Vak class, en dat is een goed iets. Je hebt je SUT beter geïsoleerd tegen bugs in andere classes.
 
-### 5. Gebruik Polymorfisme om de SUT te isoleren part2: Subclass
+### 5. Gebruik Polymorfie om de SUT te isoleren part2: Subclass
 
 Voor een ander geval is er misschien geen interface, in dat geval kunnen we een fake implementatie maken door van de originele class te overerven met het extends keyword en alle methoden te *overriden*.
 
@@ -75,7 +75,7 @@ public class FakeIndividueleToets extends Toets {
 }
   ```
 
-1. Pas de test *getCijferMetMeerdereToetsenGeeftGemiddeldeTerugVanTweeToetsen* aan zodat deze jouw fake IndividueleToets gebruikt. Zorg dat je een instantie maakt die een 8 teruggeeft, en maak ook een instantie die een 6 teruggeeft. Gebruik deze twee fakes om de instantie van Vak te maken.
+1. Pas de test *opdracht5getCijferMetMeerdereToetsenGeeftGemiddeldeTerugVanTweeToetsen* aan zodat deze jouw fake IndividueleToets gebruikt. Zorg dat je een instantie maakt die een 8 teruggeeft, en maak ook een instantie die een 6 teruggeeft. Gebruik deze twee fakes om de instantie van Vak te maken.
 1. Run de test. Als het goed is slaagt deze nu ook. Je hebt de SUT nog beter geïsoleerd tegen bugs in andere classes! 
 
 Helaas (gelukkig?) wordt er niet altijd een interface gebruikt bij afhankelijkheden naar andere classes, en ook wil je niet altijd een subclass maken. Het is best wel wat werk om fake subclasses bij te houden van alle classes die je wilt uitsluiten van je SUT.
@@ -86,10 +86,10 @@ Dat moet anders kunnen!?
 
 Het maken van fake ([AKA mock](https://en.wikipedia.org/wiki/Mock_object)) versies van classes kunnen we uitbesteden aan de Mockito library. Deze library doet eigenlijk hetzelfde als wat je in de vorige opdrachten zelf hebt gedaan, maar dan simpeler, sneller en uitgebreider. Hiervoor hebben we uiteraard de Mockito library nodig.
 
-### 5 mock() gebruiken om mock/fake objecten te maken
+### 6. mock() gebruiken om mock/fake objecten te maken
 
 1. Open de maven pom.xml en zoek de mockito library op in de lijst van dependencies. Als je in je eigen projecten ook mockito wilt gebruiken moet je deze zelf toevoegen, in deze workshop is dat al voor je gedaan. You're welcome.
-1. Bekijk de test *getCijferGeeftEenNulAanStudentenDieDeToetsNietHebbenGemaakt*.
+1. Bekijk de test *opdracht6getCijferGeeftEenNulAanStudentenDieDeToetsNietHebbenGemaakt*.
 1. We kunnen hier dezelfde aanpak gebruiken als bij de eerdere tests, maar dit keer vragen we Mockito om de fake implementatie te maken. Vervang de regel waar het toets1 object wordt aangemaakt met een aanroep naar de ```mock()``` methode van Mockito. Je moet hier een ```.class``` aan meegeven van de class waar je een mock versie van wilt hebben. Het resultaat is dan als volgt:
     ````java
     // Origineel: IndividueleToets toets1 = new IndividueleToets();
@@ -105,7 +105,7 @@ Als je de implementatie van *getVakCijferForStudent()* in *Vak* bekijkt, zie je 
 
 Het is een beetje mazzel dat de vorige test direct slaagde nadat we mock() gebruikt hebben. In dat geval geeft de mock een default van 0 terug, en dat is ook precies wat er in de test verwacht is met assert(). Maar wat nu als we meer verwachten van de mock...
 
-Bekijk de volgende *getCijferGeeftHetCorrecteCijferBijMeerdereStudenten* test. Hier wordt de toets door meerdere studenten gemaakt en elke student moet het juiste cijfer terugkrijgen uit *Vak*. In dit geval is het default gedrag van mockito (return 0) niet meer voldoende. Je hebt controle nodig over wat de mock teruggeeft als *getToetsCijferVoorStudent()* aangeroepen wordt. Mockito heeft hiervoor een reeks aan methodes om dit gedrag te definiëren.
+Bekijk de volgende *opdracht7getCijferGeeftHetCorrecteCijferBijMeerdereStudenten* test. Hier wordt de toets door meerdere studenten gemaakt en elke student moet het juiste cijfer terugkrijgen uit *Vak*. In dit geval is het default gedrag van mockito (return 0) niet meer voldoende. Je hebt controle nodig over wat de mock teruggeeft als *getToetsCijferVoorStudent()* aangeroepen wordt. Mockito heeft hiervoor een reeks aan methodes om dit gedrag te definiëren.
 1. mock het toets object net als bij de vorige opdracht.
 1. Run de falende test. Je ziet in de output dat er twee assertions falen.
 1. Voeg de volgende regel toe in het Arrange blok van de test, na het aanmaken van het mock toets1 object:
@@ -132,7 +132,7 @@ Wat kunnen we nog meer doen met Mockito?
 
 Niet alle methoden hebben een handige return value om het gedrag te valideren. Sommige methodes geven niks (void) terug. Hoe kan je dan na gaan dat de methode zijn werk heeft gedaan in een unit test? 
 
-1. Zie de test *verwijderStudentWerkt*. De assertion gebruikt nu het Toets opbject direct voor de assertion? De huidige oplossing is niet fantastisch. Het enige wat er nagegaan moet worden is of de juiste methodes op de toets wel of niet aangeroepen zijn, verder rijkt ons SUT niet, dus hoe Toets precies zijn werk doet is niet relevant voor deze test. Mockito heeft hier de verify() methode voor, hiermee kan je nagaan of methodes op een mock zijn aangeroepen, en met welke parameters.
+1. Zie de test *opdracht8verwijderStudentUitAllToetsenVerwijdertStudentUitToets*. De assertion gebruikt nu het Toets opbject direct voor de assertion? De huidige oplossing is niet fantastisch. Het enige wat er nagegaan moet worden is of de juiste methodes op de toets wel of niet aangeroepen zijn, verder rijkt ons SUT niet, dus hoe Toets precies zijn werk doet is niet relevant voor deze test. Mockito heeft hier de verify() methode voor, hiermee kan je nagaan of methodes op een mock zijn aangeroepen, en met welke parameters.
 1. Mock de toets.
 1. Vervang de huidige assertion met deze Mockito verify():
    ````java
@@ -151,7 +151,7 @@ Niet alle methoden hebben een handige return value om het gedrag te valideren. S
 
 ### 9. Exceptions gooien met mocks
 
-- Bekijk de test *opdracht9verwijderStudent*.
+- Bekijk de test *opdracht9verwijderStudentGooitRTEBijNullStudent*.
 - Er wordt in de assertThrows een null meegegeven als student aan verwijderStudentUitAlleToetsen(). Deze null wordt doorgegeven in de aanroep van *verwijderStudentResultaten* op *Toets*. *Toets.verwijderStudentResultaten()* geeft daarop een *FoutiefStudentException* en deze wordt gevangen in *Vak* en er wordt dan een *RuntimeException* gegooid. Oftewel, de mock van Toets moet een *FoutiefStudentException* gaan gooien.
 - Maak de mock van Toets aan in de Arrange sectie.
 - In dit geval willen we eigenlijk de volgende constructie gebruiken om de mock een Exception te laten gooien:

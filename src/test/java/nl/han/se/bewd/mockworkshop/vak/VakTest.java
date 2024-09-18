@@ -100,7 +100,7 @@ class VakTest {
     }
 
     @Test
-    public void opdracht9verwijderStudent() {
+    public void opdracht9verwijderStudentGooitRTEBijNullStudent() {
         // Arrange
         Toets toets1 = new Toets();
         Vak vak = new Vak(List.of(toets1));
