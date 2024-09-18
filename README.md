@@ -62,16 +62,16 @@ import nl.han.se.bewd.mockworkshop.student.Student;
 
 public class FakeIndividueleToets extends Toets {
 
-    int fakeReturnValue = 0;
+   int fakeReturnValue = 0;
 
-    public void setReturnValueForGetToetsCijferVoorStudent(int fakeReturnvalue) {
-        this.fakeReturnValue = fakeReturnvalue;
-    }
+   public void setReturnValueForGetToetsCijferVoorStudent(int fakeReturnvalue) {
+      this.fakeReturnValue = fakeReturnvalue;
+   }
 
-    @Override
-    public int getToetsCijferVoorStudent(Student s) {
-        return fakeReturnValue;
-    }
+   @Override
+   public int getToetsCijferVoorStudent(Student s) {
+      return fakeReturnValue;
+   }
 }
   ```
 
@@ -151,18 +151,18 @@ Niet alle methoden hebben een handige return value om het gedrag te valideren. S
 
 ### 9. Exceptions gooien met mocks
 
-- Bekijk de test *opdracht9verwijderStudentGooitRTEBijNullStudent*.
-- Er wordt in de assertThrows een null meegegeven als student aan verwijderStudentUitAlleToetsen(). Deze null wordt doorgegeven in de aanroep van *verwijderStudentResultaten* op *Toets*. *Toets.verwijderStudentResultaten()* geeft daarop een *FoutiefStudentException* en deze wordt gevangen in *Vak* en er wordt dan een *RuntimeException* gegooid. Oftewel, de mock van Toets moet een *FoutiefStudentException* gaan gooien.
+- Bekijk de test *opdracht9verwijderStudentGooitRTEBijNullStudent*. Deze test slaagt al wel, maar is nu sterk afhankelijk van *Toets*. Deze moet worden ontkoppeld met mocking.
+- Er wordt in de assertThrows een null meegegeven aan *verwijderStudentUitAlleToetsen()*. Deze null wordt doorgegeven in de aanroep van *verwijderStudentResultaten* op *Toets*. *Toets.verwijderStudentResultaten()* geeft daarop een *FoutiefStudentException* en deze wordt gevangen in *Vak* en er wordt dan een *RuntimeException* gegooid. Oftewel, de mock van Toets moet een *FoutiefStudentException* gaan gooien.
 - Maak de mock van Toets aan in de Arrange sectie.
 - In dit geval willen we eigenlijk de volgende constructie gebruiken om de mock een Exception te laten gooien:
   ````java
   when(toets1.verwijderStudentResultaten(any())).thenThrow(FoutiefStudentException.class);
   ````
-- Dit werkt niet. Een methode stubben die niks teruggeeft (geen return value, aka void) is wat lastiger en vereist een iets andere mockito syntax.
+- Dit werkt niet. Een methode stubben die niks teruggeeft (geen return value, aka void) is wat lastiger en vereist een iets andere mockito syntax. Bovenstaande syntax had ook gewerkt als de methode toevallig een methode was met return value.
   ````java
   doThrow(FoutiefStudentException.class).when(toets1).verwijderStudentResultaten(isNull());
   ````
-- Als je wilt dat je mock alleen een Exception gooit als er ook een null wordt meegegeven aan de gestubte methode dan kan je de *isNull()* matcher gebruiken in plaats van de *any()* matcher.
+- Als je wilt dat je mock alleen een Exception gooit als er ook een null wordt meegegeven aan de gestubte methode dan kan je de *isNull()* matcher gebruiken in plaats van de *any()* matcher. Test of dat waar is.
 
 ## 10. Meer Mockito
 
