@@ -1,7 +1,7 @@
 package nl.han.se.bewd.mockworkshop.toets;
 
-import nl.han.se.bewd.mockworkshop.student.Student;
 import nl.han.se.bewd.mockworkshop.resultaat.ToetsResultaatRegistratieDB;
+import nl.han.se.bewd.mockworkshop.student.Student;
 
 public class Toets implements Summatief {
 
@@ -26,7 +26,7 @@ public class Toets implements Summatief {
 
     @Override
     public void verwijderStudentResultaten(Student s) {
-        if (null == s) throw new FoutiefStudentException();
+
         db.verwijderResultaatVanStudent(s);
     }
 }

@@ -1,5 +1,6 @@
 package nl.han.se.bewd.mockworkshop.resultaat;
 
+import nl.han.se.bewd.mockworkshop.student.FoutiefStudentException;
 import nl.han.se.bewd.mockworkshop.student.Student;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class ToetsResultaatRegistratieDB {
     }
 
     public void verwijderResultaatVanStudent(Student stud) {
+        if (null == stud) throw new FoutiefStudentException();
         db.removeIf(tr -> compareStudents(tr.student(), stud));
     }
 

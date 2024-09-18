@@ -40,6 +40,6 @@ class ToetsResultaatRegistratieDBTest {
         List<String> resultaten1 = sut.vraagResultatenOp(student1);
 
         // Assert
-        assertEquals(resultaten1.get(0), 10);
+        assertEquals(resultaten1.get(0), String.valueOf(10));
     }
 }

@@ -1,7 +1,7 @@
 package nl.han.se.bewd.mockworkshop.vak;
 
 import nl.han.se.bewd.mockworkshop.student.Student;
-import nl.han.se.bewd.mockworkshop.toets.FoutiefStudentException;
+import nl.han.se.bewd.mockworkshop.student.FoutiefStudentException;
 import nl.han.se.bewd.mockworkshop.toets.Summatief;
 
 import java.util.List;
