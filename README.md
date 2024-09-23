@@ -166,6 +166,28 @@ Niet alle methoden hebben een handige return value om het gedrag te valideren. S
 
 ## 10. Mocks injecteren met @Mock en @InjectMocks
 
+1. Bekijk de testen in het java bestand *ToetsTest.java*. Deze testen slagen al, we gaan ze alleen iets meer leesbaar maken.
+2. Deze testen gebruiken al mocking, maar als je de Assert onderdelen van de verschillende testen vergelijkt valt je misschien op dat er elke keer exact dezelfde handelingen verricht worden.
+3. Dat kan beter. In plaats van zelf de mocks te maken met *mock()*, kan je ook een eenvoudige vorm van Dependency Injection gebruiken van Mockito.
+4. Zet op de class ToetsTest de annotatie ```@ExtendWith(MockitoExtension.class)```. Hier mee activeer je mock injectie door Mockito.
+5. Verhuis de mock variabelen voor student en de db uit elke test naar een class variabele en zat daarboven de ```@Mock``` annotatie.
+6. Zorg er voor dat alle verwijzingen kloppen en run de tests. Als het goed is blijven de testen slagen.
+7. Het aanmaken van het SUT en het injecteren van de mockDB gebeurt nog wel in elke test apart :( . Verplaats het sut naar een class variabele, en annoteer deze met ```@InjectMocks```. Verwijder de regel in de individuele testen waar het sut wordt aangemaakt en de .setDB() wordt aangeroepen.
+8. De testen zien er nu als het goed is al een stuk opgeruimder uit:
+  ```java
+  @Test
+  void opdracht10getToetsCijferVoorStudentGeeftToetsCijferVoorStudent2() {
+      // Arrange
+      when(mockDB.vraagResultatenOp(mockStudent)).thenReturn(List.of("8"));
+      // Act
+      int result = sut.getToetsCijferVoorStudent(mockStudent);
+      // Assert
+      assertEquals(8, result);
+  }
+  ```
+  - Clean! <3
+9. Als het goed blijven de testen werken. Mockito maakt nu een nieuwe instantie van het SUT (*Toets*) en injecteerd de mock *ToetsResultaatRegistratieDB* via de setter van *Toets*. Magisch en handig!
+
 ## 11. Meer Mockito
 
 1. Probeer zelf extra test cases te schrijven met de volgende mockito features.
