@@ -33,12 +33,12 @@ In de applicatie zit één enkele bug in één enkele class. Het doel van deze w
 
 ### 4. Gebruik Polymorfie om de SUT te isoleren part1: Interfaces
 
-Bekijk de testen in de class 'VakTest'. De eerste test 'opdracht4getCijferMetEnkeleToetsGeeftCijferTerug' faalt. De SUT van deze test is de klasse 'Vak', maar hier zit niet de bug. Als je wilt dat alleen je 'System Under Test' (Vak in dit geval) getest wordt, en bugs in andere classes (Bijvoorbeeld de *IndividueleToets* class) er niet voor zorgen dat deze test faalt. Wat kan je dan aanpassen in je unit test? Hoe verbreken we de afhankelijkheid van *IndividueleToets*
+Bekijk de testen in de class 'VakTest'. De eerste test 'opdracht4getCijferMetEnkeleToetsGeeftCijferTerug' faalt. De SUT van deze test is de klasse 'Vak', maar hier zit niet de bug. Als je wilt dat alleen je 'System Under Test' (Vak in dit geval) getest wordt, en bugs in andere classes (Bijvoorbeeld de *Toets* class) er niet voor zorgen dat deze test faalt. Wat kan je dan aanpassen in je unit test? Hoe verbreken we de afhankelijkheid van *Toets*
 
 1. Vervang de implementatie van de andere classes door gebruik te maken van Polymorfisme. Als de class waar je afhankelijk van bent een interface is dan kan je een eigen 'fake implementatie'' schrijven die vaste waardes teruggeeft. Maak de fake class in de test/java directory in het package 'nl.han.se.bewd.mockworkshop.toets'.
 1. Creeer in je test package een nieuwe class welke de interface 'Summatief' implementeert.
 1. Om te voldoen aan de interface moet de methode 'getToetsCijferVoorStudent' toegevoegd worden. Maak de methode en laat deze simpelweg altijd een 8 teruggeven (```return 8;```). Vergeet niet de ```@Override``` annotatie toe te voegen.
-1. Pas de test aan, zodat deze niet langer een *IndividueleToets* instantieert, maar een *FakeSummatief*. De ```studentMaaktToets()``` methode hoeft ook niet meer aangeroepen te worden. Het Arrange stuk van de test komt er nu zo uit te zien:
+1. Pas de test aan, zodat deze niet langer een *Toets* instantieert, maar een *FakeSummatief*. De ```studentMaaktToets()``` methode hoeft ook niet meer aangeroepen te worden. Het Arrange stuk van de test komt er nu zo uit te zien:
 
     ```java
     // Arrange
@@ -52,15 +52,15 @@ Bekijk de testen in de class 'VakTest'. De eerste test 'opdracht4getCijferMetEnk
 
 Voor een ander geval is er misschien geen interface, in dat geval kunnen we een fake implementatie maken door van de originele class te overerven met het extends keyword en alle methoden te *overriden*.
 
-1. Maak een eigen fake implementatie van *IndividueleToets* door een eigen subclass te maken (```extends IndividueleToets```). zet deze ook in het test package naast *fakeSummatief*.
-1. Het zou handig zijn als we in onze unit test kunnen aangeven wat de fake terug moet geven, dus voegen we aan de fake IndividueleToets een extra methode toe waarmee we de fake return value voor ```getToetsCijferVoorStudent()``` kunnen setten. Zie onderstaande implementatie van de *fakeIndividueleToets* class.
+1. Maak een eigen fake implementatie van *Toets* door een eigen subclass te maken (```extends Toets```). zet deze ook in het test package naast *fakeSummatief*.
+1. Het zou handig zijn als we in onze unit test kunnen aangeven wat de fake terug moet geven, dus voegen we aan de fake Toets een extra methode toe waarmee we de fake return value voor ```getToetsCijferVoorStudent()``` kunnen setten. Zie onderstaande implementatie van de *fakeToets* class.
 
   ```java
   package nl.han.se.bewd.mockworkshop.toets;
 
 import nl.han.se.bewd.mockworkshop.student.Student;
 
-public class FakeIndividueleToets extends Toets {
+public class FakeToets extends Toets {
 
    int fakeReturnValue = 0;
 
@@ -75,7 +75,7 @@ public class FakeIndividueleToets extends Toets {
 }
   ```
 
-1. Pas de test *opdracht5getCijferMetMeerdereToetsenGeeftGemiddeldeTerugVanTweeToetsen* aan zodat deze jouw fake IndividueleToets gebruikt. Zorg dat je een instantie maakt die een 8 teruggeeft, en maak ook een instantie die een 6 teruggeeft. Gebruik deze twee fakes om de instantie van Vak te maken.
+1. Pas de test *opdracht5getCijferMetMeerdereToetsenGeeftGemiddeldeTerugVanTweeToetsen* aan zodat deze jouw fake Toets gebruikt. Zorg dat je een instantie maakt die een 8 teruggeeft, en maak ook een instantie die een 6 teruggeeft. Gebruik deze twee fakes om de instantie van Vak te maken.
 1. Run de test. Als het goed is slaagt deze nu ook. Je hebt de SUT nog beter geïsoleerd tegen bugs in andere classes! 
 
 Helaas (gelukkig?) wordt er niet altijd een interface gebruikt bij afhankelijkheden naar andere classes, en ook wil je niet altijd een subclass maken. Het is best wel wat werk om fake subclasses bij te houden van alle classes die je wilt uitsluiten van je SUT.
@@ -92,8 +92,8 @@ Het maken van fake ([AKA mock](https://en.wikipedia.org/wiki/Mock_object)) versi
 1. Bekijk de test *opdracht6getCijferGeeftEenNulAanStudentenDieDeToetsNietHebbenGemaakt*.
 1. We kunnen hier dezelfde aanpak gebruiken als bij de eerdere tests, maar dit keer vragen we Mockito om de fake implementatie te maken. Vervang de regel waar het toets1 object wordt aangemaakt met een aanroep naar de ```mock()``` methode van Mockito. Je moet hier een ```.class``` aan meegeven van de class waar je een mock versie van wilt hebben. Het resultaat is dan als volgt:
     ````java
-    // Origineel: IndividueleToets toets1 = new IndividueleToets();
-    IndividueleToets toets1 = mock(IndividueleToets.class);
+    // Origineel: Toets toets1 = new Toets();
+    Toets toets1 = mock(Toets.class);
     ````
 1. Om dit te laten compileren moet de import van de mock methode nog toegevoegd worden. Dit kan je oplossen in IntelliJ door je cursor op de aanroep van mock te zetten en dan met Alt-Enter te kiezen voor 'import static method etc...'. Als het goed is wordt dan bovenin je test bestand de regel ```import static org.mockito.Mockito.mock;``` toegevoegd.
 1. Run de test. De test zou moeten slagen.
@@ -143,7 +143,7 @@ Niet alle methoden hebben een handige return value om het gedrag te valideren. S
 1. Run de test opnieuw en bestudeer de output. Als het goed is lijkt deze hier op:
     ```
     Wanted but not invoked:
-    individueleToets.verwijderStudentResultaten(
+    toets.verwijderStudentResultaten(
       nl.han.se.bewd.mockworkshop.student.Student
     );
     ```
@@ -164,7 +164,9 @@ Niet alle methoden hebben een handige return value om het gedrag te valideren. S
   ````
 - Als je wilt dat je mock alleen een Exception gooit als er ook een null wordt meegegeven aan de gestubte methode dan kan je de *isNull()* matcher gebruiken in plaats van de *any()* matcher. Test of dat waar is.
 
-## 10. Meer Mockito
+## 10. Mocks injecteren met @Mock en @InjectMocks
+
+## 11. Meer Mockito
 
 1. Probeer zelf extra test cases te schrijven met de volgende mockito features.
    1. [Verifying exact number of invocations](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#4)
