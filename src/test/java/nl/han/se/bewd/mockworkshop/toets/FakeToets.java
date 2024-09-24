@@ -4,7 +4,7 @@ import nl.han.se.bewd.mockworkshop.student.Student;
 
 public class FakeToets extends Toets {
 
-    int fakeReturnValue = 0;
+    int fakeReturnValue = 7;
 
     public void setReturnValueForGetToetsCijferVoorStudent(int fakeReturnvalue) {
         this.fakeReturnValue = fakeReturnvalue;
@@ -13,10 +13,5 @@ public class FakeToets extends Toets {
     @Override
     public int getToetsCijferVoorStudent(Student s) {
         return fakeReturnValue;
-    }
-
-    @Override
-    public void studentMaaktToets(Student stud, int cijfer) {
-        db.voegResultaatToe(stud, Integer.toString(cijfer));
     }
 }
