@@ -1,6 +1,9 @@
 package nl.han.se.bewd.mockworkshop.vak;
 
 import nl.han.se.bewd.mockworkshop.student.Student;
+import nl.han.se.bewd.mockworkshop.toets.FakeSummatief;
+import nl.han.se.bewd.mockworkshop.toets.FakeToets;
+import nl.han.se.bewd.mockworkshop.toets.Summatief;
 import nl.han.se.bewd.mockworkshop.toets.Toets;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +17,8 @@ class VakTest {
     void opdracht4getCijferMetEnkeleToetsGeeftCijferTerug() {
         // Arrange
         Student testStudent = new Student();
-        Toets toets1 = new Toets();
-        toets1.studentMaaktToets(testStudent, 8);
+        Summatief toets1 = new FakeSummatief();
+        //toets1.studentMaaktToets(testStudent, 8);
         Vak vak = new Vak(List.of(toets1));
 
         // Act
@@ -30,9 +33,9 @@ class VakTest {
         // Arrange
         Student testStudent = new Student();
 
-         Toets toets1 = new Toets();
+        FakeToets toets1 = new FakeToets();
          toets1.studentMaaktToets(testStudent, 8);
-         Toets toets2 = new Toets();
+        FakeToets toets2 = new FakeToets();
          toets2.studentMaaktToets(testStudent, 6);
 
         Vak vak = new Vak(List.of(toets1, toets2));
